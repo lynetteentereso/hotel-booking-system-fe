@@ -1,0 +1,26 @@
+input, select{
+    width: 90% !important;
+    margin-left: 0 !important;
+}
+.guest-form label{
+    text-align: left !important;
+}
+.guest-form button{
+    margin-left: 320px;
+}
+.guest-table{
+    width: 95%;
+    margin: auto;
+}
+.guest-table .delete{
+    color: rgb(143, 12, 12) !important;
+    font-size: 22px ;
+    cursor: pointer;
+}
+.guest-table .edit{
+    font-size: 20px ;
+    cursor: pointer;
+}
+.wrapper{
+    margin-left: 15px !important;
+   }

@@ -1,0 +1,21 @@
+svg{
+  width: 121px !important;
+}
+.navbar>.container{
+  height: 150px !important;
+}
+.nav-link{
+  margin: 0 10px !important;
+}
+.navbar a{
+  text-decoration: none;
+  color: rgb(31, 30, 30) !important;
+}
+.navbar a:focus{
+  color: rgb(224, 64, 144) !important;
+  font-weight: 600;
+}
+.navbar-text{
+  position: absolute;
+  right: 40px;
+}
