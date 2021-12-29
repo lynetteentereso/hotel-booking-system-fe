@@ -4,7 +4,8 @@ const initialState = {
     rooms: [],
     users:[],
     departments:[],
-    loggedInUser: localStorage.getItem('User') ? localStorage.getItem('User') : null
+    loggedInUser: localStorage.getItem('User') ? localStorage.getItem('User') : null,
+    api : 'https://hotel-booking-system-be.herokuapp.com',
     
 }   
 const reducer = (state = initialState, action) => {

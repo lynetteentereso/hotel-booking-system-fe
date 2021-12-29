@@ -7,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector} from 'react-redux';
 
 const Rooms = () => {
+    const api = useSelector(state => state.api);
     const dispatch = useDispatch();
     const rooms = useSelector(state => state.rooms);
     const [loading,setLoading] = useState(false);
@@ -17,7 +18,7 @@ const Rooms = () => {
     const [toUpdateRoom, setToUpdateRoom] = useState({});
    
     useEffect( () => {
-        axios.get('http://localhost:8000/rooms').then( res => {
+        axios.get(`${api}/rooms`).then( res => {
             setLoading(true);
             dispatch({type: 'LOAD_ROOMS', payload: res.data});
         }); 
@@ -31,12 +32,12 @@ const Rooms = () => {
             count: count,
         }
         if(toUpdateRoom._id){
-            axios.put(`http://localhost:8000/rooms/${toUpdateRoom._id}`, newRoom).then(res => {
+            axios.put(`${api}/rooms/${toUpdateRoom._id}`, newRoom).then(res => {
                 newRoom._id = res.data._id
                 dispatch({type: 'UPDATE_ROOM', payload: newRoom})
             })
         }else{
-            axios.post('http://localhost:8000/rooms', newRoom).then(res => {
+            axios.post(`${api}/rooms`, newRoom).then(res => {
                     alert('New room record created!');
                     console.log(res.data);
                     dispatch({type: 'ADD_ROOM', payload: res.data});
@@ -50,14 +51,14 @@ const Rooms = () => {
         setLgShow(false);
     }
 
-    const onDeleteHandler = (id) => {
-        axios.delete(`http://localhost:8000/rooms/${id}`).then(res => {
+    const onDeleteRoomHandler = (id) => {
+        axios.delete(`${api}/rooms/${id}`).then(res => {
             alert('Record has been deleted.')
             dispatch({type: 'DELETE_ROOM', payload: id})
         })
     }
 
-    const onUpdateHandler = (room) => {
+    const onUpdateRoomHandler = (room) => {
         setToUpdateRoom(room);
         setLgShow(true);
         setType(room.type);
@@ -67,10 +68,12 @@ const Rooms = () => {
 
     return (
         <div className='wrapper'>
-           <h1>Rooms</h1> 
-            <Button className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
-            + New Room
-            </Button>
+            <Row className='d-flex justify-content-end'>
+                <h1>Rooms</h1> 
+                <Button style={{width: '150px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} className="mb-3" variant="primary" onClick={() => setLgShow(true)} className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
+                + New Room
+                </Button>
+            </Row>
 
             <Modal
             size="lg"
@@ -114,7 +117,7 @@ const Rooms = () => {
                             </Col>
                         </Row>
 
-                        <Button variant="primary" type='submit' onClick={() => setLgShow(false)}>
+                        <Button style={{width: '150px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} type='submit' onClick={() => setLgShow(false)}>
                         {
                          toUpdateRoom._id ? 'Update Room' : 'Save New Room'
                         }
@@ -133,7 +136,6 @@ const Rooms = () => {
                         <th>Rate</th>
                         <th>Count</th>
                         <th></th>
-                        <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -146,8 +148,16 @@ const Rooms = () => {
                                         <td>{dat.type}</td>
                                         <td>{dat.rate}</td>
                                         <td>{dat.count}</td>                                   
-                                        <td className='edit' onClick={()=> onUpdateHandler(dat)}><FaEdit /></td>
-                                        <td className='delete' onClick={()=> onDeleteHandler(dat._id)}><AiFillDelete /></td>
+                                        <td className='edit d-flex' style={{fontSize: '15px'}}>
+                                            <span>
+                                                <FaEdit style={{marginRight: '-45px',marginTop: '-5px'}} onClick={()=> onUpdateRoomHandler(dat)}/> 
+                                                Edit
+                                            </span>
+                                            <span>
+                                                <AiFillDelete style={{marginRight: '-45px',marginTop: '-5px', color:'red', fontSize:'18px'}} onClick={()=> onDeleteRoomHandler(dat._id)} /> 
+                                                Delete
+                                            </span> 
+                                        </td>
                                     </tr>
                                     </>
                                 )

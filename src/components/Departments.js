@@ -8,6 +8,7 @@ import { useDispatch, useSelector} from 'react-redux';
 
 const Departments = () => {
     const dispatch = useDispatch();
+    const api = useSelector(state => state.api)
     const departments = useSelector(state => state.departments);
     const [deptLoading,setDeptLoading] = useState(false);
     const [lgShow, setLgShow] = useState(false);
@@ -16,7 +17,7 @@ const Departments = () => {
     const [toUpdateDepartment, setToUpdateDepartment] = useState({});
    
     useEffect( () => {
-        axios.get('http://localhost:8000/departments').then( res => {
+        axios.get(`${api}/departments`).then( res => {
             setDeptLoading(true);
             dispatch({type: 'LOAD_DEPARTMENTS', payload: res.data});
         }); 
@@ -29,12 +30,12 @@ const Departments = () => {
             head: head
         }
         if(toUpdateDepartment._id){
-            axios.put(`http://localhost:8000/departments/${toUpdateDepartment._id}`, newDepartment).then(res => {
+            axios.put(`${api}/departments/${toUpdateDepartment._id}`, newDepartment).then(res => {
                 newDepartment._id = res.data._id
                 dispatch({type: 'UPDATE_DEPARTMENT', payload: newDepartment})
             })
         }else{
-            axios.post('http://localhost:8000/departments', newDepartment).then(res => {
+            axios.post(`${api}/departments`, newDepartment).then(res => {
                     alert('New room record created!');
                     console.log(res.data);
                     dispatch({type: 'ADD_DEPARTMENT', payload: res.data});
@@ -47,14 +48,14 @@ const Departments = () => {
         setLgShow(false);
     }
 
-    const onDeleteHandler = (id) => {
-        axios.delete(`http://localhost:8000/departments/${id}`).then(res => {
+    const onDeleteDepartmentHandler = (id) => {
+        axios.delete(`${api}/departments/${id}`).then(res => {
             alert('Department has been deleted.')
             dispatch({type: 'DELETE_DEPARTMENT', payload: id})
         })
     }
 
-    const onUpdateHandler = (dept) => {
+    const onUpdateDepartmentHandler = (dept) => {
         setToUpdateDepartment(dept);
         setLgShow(true);
         setName(dept.name);
@@ -63,10 +64,12 @@ const Departments = () => {
 
     return (
         <div className='wrapper'>
-           <h1>Departments</h1> 
-            <Button className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
+           <Row className='d-flex justify-content-end'>
+            <h1>Departments</h1> 
+            <Button style={{width: '170px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
             + New Department
             </Button>
+           </Row> 
 
             <Modal
             size="lg"
@@ -102,7 +105,7 @@ const Departments = () => {
                         </Row>
          
 
-                        <Button variant="primary" type='submit' onClick={() => setLgShow(false)}>
+                        <Button style={{width: '200px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} type='submit' onClick={() => setLgShow(false)}>
                         {
                          toUpdateDepartment._id ? 'Update Department' : 'Save New Department'
                         }
@@ -132,8 +135,16 @@ const Departments = () => {
                                     <tr>
                                         <td>{dat.name}</td>
                                         <td>{dat.head}</td>                             
-                                        <td className='edit' onClick={()=> onUpdateHandler(dat)}><FaEdit /></td>
-                                        <td className='delete' onClick={()=> onDeleteHandler(dat._id)}><AiFillDelete /></td>
+                                        <td className='edit d-flex' style={{fontSize: '15px'}}>
+                                            <span>
+                                                <FaEdit style={{marginRight: '-45px',marginTop: '-5px'}} onClick={()=> onUpdateDepartmentHandler(dat)}/> 
+                                                Edit
+                                            </span>
+                                            <span>
+                                                <AiFillDelete style={{marginRight: '-45px',marginTop: '-5px', color:'red', fontSize:'18px'}} onClick={()=> onDeleteDepartmentHandler(dat._id)} /> 
+                                                Delete
+                                            </span> 
+                                        </td>
                                     </tr>
                                     </>
                                 )

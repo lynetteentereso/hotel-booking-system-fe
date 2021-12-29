@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import './RegistrationForm.css'
 
 const RegistrationForm = (props) => {
+    const api = useSelector( state => state.api)
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullname, setFullname] = useState('');
@@ -17,7 +18,7 @@ const RegistrationForm = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        axios.get('http://localhost:8000/departments').then(res => {
+        axios.get(`${api}/departments`).then(res => {
             console.log(res.data);
             setData(res.data);
             setLoading(true);
@@ -27,7 +28,7 @@ const RegistrationForm = (props) => {
     const onUserRegistrationHandler = (e) => {
         e.preventDefault();
         // Check if email exists
-        axios.post('http://localhost:8000/users/email-exists', {email: email}).then(res => {
+        axios.post(`${api}/users/email-exists`, {email: email}).then(res => {
         // if email exists, don't register
         // if email does not exist, proceed with registration
         // res.data === true (email exists)
@@ -40,7 +41,7 @@ const RegistrationForm = (props) => {
 
         if(!res.data){
             // res.data === false (email does not exist) --> proceed
-            axios.post('http://localhost:8000/users/register', user).then(res => {
+            axios.post(`${api}/users/register`, user).then(res => {
                 alert('Registration Successful!');
                 navigate('/');
                 dispatch({type: 'LOAD_USERS', payload: res.data})
@@ -87,7 +88,7 @@ const RegistrationForm = (props) => {
                         Department
                     </Form.Label>
                     <Col sm="10">
-                        <Form.Select required onChange={(e) => setDepartment(e.target.value)}>
+                        <Form.Select onChange={(e) => setDepartment(e.target.value)}>
                             {
                                 loading && data.map(dat => {
                                     return(
@@ -103,7 +104,7 @@ const RegistrationForm = (props) => {
 
                 <Form.Group as={Row} className="mb-6">
                     <Col sm={{ span: 10, offset: 2 }}>
-                    <Button className="register" type="submit">Register</Button>
+                    <Button style={{width: '150px', marginRight:'50px', color:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)', background: 'white'}} className="register" type="submit">Register</Button>
                     </Col>
                 </Form.Group>
 

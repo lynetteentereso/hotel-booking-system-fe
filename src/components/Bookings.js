@@ -9,6 +9,7 @@ import moment from 'moment';
 
 const Bookings = () => {
     const dispatch = useDispatch();
+    const api = useSelector(state => state.api)
     const bookings = useSelector(state => state.bookings);
     const User = useSelector(state => state.loggedInUser);
     const [loading,setLoading] = useState(false);
@@ -27,7 +28,7 @@ const Bookings = () => {
     const [save,setSave] = useState(false);
 
     useEffect( () => {
-        axios.get('http://localhost:8000/bookings').then( res => {
+        axios.get(`${api}/bookings`).then( res => {
             console.log(res.data);
             setLoading(true);
             dispatch({type: 'LOAD_BOOKINGS', payload: res.data});
@@ -37,7 +38,7 @@ const Bookings = () => {
     console.log(bookings);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/guests').then(res => {
+        axios.get(`${api}/guests`).then(res => {
             console.log(res.data);
             setGuestData(res.data);
             setGuestLoading(true);
@@ -46,7 +47,7 @@ const Bookings = () => {
     console.log(guestData);
 
     useEffect(() => {
-        axios.get('http://localhost:8000/rooms').then(res => {
+        axios.get(`${api}/rooms`).then(res => {
             setRoomData(res.data);
             setRoomLoading(true);
         }); 
@@ -64,21 +65,20 @@ const Bookings = () => {
         }
         if(toUpdateBooking._id){
             axios
-                .put(`http://localhost:8000/bookings/${toUpdateBooking._id}`, newBooking)
+                .put(`${api}/bookings/${toUpdateBooking._id}`, newBooking)
                 .then(res => {
                     newBooking._id = res.data._id
                     dispatch({type: 'UPDATE_BOOKING', payload: newBooking})
                     axios
-                        .get('http://localhost:8000/bookings')
+                        .get(`${api}/bookings`)
                         .then(res1 => {
                             setSave(true);
                         });
                 });
         }else{
-            axios.post('http://localhost:8000/bookings', newBooking).then(res => {
+            axios.post(`${api}/bookings`, newBooking).then(res => {
                     alert('New room record created!');
-                    //console.log(res.data);
-                    axios.get(`http://localhost:8000/bookings/${res.data._id}`).then(result => {
+                    axios.get(`${api}/bookings/${res.data._id}`).then(result => {
                         console.log(result.data);
                     dispatch({type: 'ADD_BOOKING', payload: result.data});
                     })
@@ -94,14 +94,14 @@ const Bookings = () => {
         setLgShow(false);
     }
 
-    const onDeleteHandler = (id) => {
-        axios.delete(`http://localhost:8000/bookings/${id}`).then(res => {
+    const onBookingDeleteHandler = (id) => {
+        axios.delete(`${api}/bookings/${id}`).then(res => {
             alert('Record has been deleted.')
             dispatch({type: 'DELETE_BOOKING', payload: id})
         })
     }
 
-    const onUpdateHandler = (booking) => {
+    const onBookingUpdateHandler = (booking) => {
         setToUpdateBooking(booking);
         setLgShow(true);
         setGuest(booking.guest._id);
@@ -228,7 +228,7 @@ const Bookings = () => {
                             </Col>
                         </Row>
 
-                        <Button variant="primary" type='submit' onClick={() => setLgShow(false)}>
+                        <Button style={{width: '180px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} type='submit' onClick={() => setLgShow(false)}>
                         {
                          toUpdateBooking._id ? 'Update Booking' : 'Save New Booking'
                         }
@@ -267,11 +267,11 @@ const Bookings = () => {
                                         <td>{dat.status}</td>
                                         <td className='edit d-flex' style={{fontSize: '15px'}}>
                                             <span>
-                                                <FaEdit style={{marginRight: '-45px',marginTop: '-5px'}} onClick={()=> onUpdateHandler(dat)}/> 
+                                                <FaEdit style={{marginRight: '-45px',marginTop: '-5px'}} onClick={()=> onBookingUpdateHandler(dat)}/> 
                                                 Edit
                                             </span>
                                             <span>
-                                                <AiFillDelete style={{marginRight: '-45px',marginTop: '-5px', color:'red', fontSize:'18px'}} onClick={()=> onDeleteHandler(dat._id)} /> 
+                                                <AiFillDelete style={{marginRight: '-45px',marginTop: '-5px', color:'red', fontSize:'18px'}} onClick={()=> onBookingDeleteHandler(dat._id)} /> 
                                                 Delete
                                             </span> 
                                         </td>

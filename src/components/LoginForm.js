@@ -1,11 +1,12 @@
 import {useState} from 'react';
 import { useNavigate } from 'react-router';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import './LoginForm.css';
 
 const LoginForm = () => {
+    const api = useSelector(state => state.api)
     const [email, setEmail] = useState('');
     const [password, setPassword] =useState('');
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ const LoginForm = () => {
     
     const onSubmitFormHandler = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:8000/users/login', {email: email, password: password}).then(res => {
+        axios.post(`${api}/users/login`, {email: email, password: password}).then(res => {
             if(!res.data.error){
                 let response = res.data;
                 dispatch({type: 'SET_LOGGEDIN_USER', payload: response.user});
@@ -48,7 +49,7 @@ const LoginForm = () => {
 
                 <Form.Group as={Row} className="mb-6">
                     <Col sm={{ span: 10, offset: 2 }}>
-                    <Button className="login" type="submit">Log in</Button>
+                    <Button style={{borderColor: 'rgb(31, 30, 30)'}}className="login" type="submit">Log in</Button>
                     </Col>
                 </Form.Group>
 

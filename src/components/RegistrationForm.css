@@ -1,9 +1,13 @@
 .register{
     background-color: white !important;
-    color: blue !important;
+    color: rgb(31, 30, 30) !important;
         width:90%!important;
         margin-left: 0px !important;
 
+}
+.login{
+    color: white !important;
+    background: rgb(31, 30, 30) !important;
 }
 input, select{
     width: 100% !important;

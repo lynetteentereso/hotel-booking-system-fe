@@ -7,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { useDispatch, useSelector} from 'react-redux';
 
 const Guests = () => {
+    const api = useSelector(state => state.api)
     const dispatch = useDispatch();
     const guests = useSelector(state => state.guests);
     const [loading,setLoading] = useState(false);
@@ -22,7 +23,7 @@ const Guests = () => {
     const [toUpdateGuest, setToUpdateGuest] = useState({});
    
     useEffect( () => {
-        axios.get('http://localhost:8000/guests').then( res => {
+        axios.get(`${api}/guests`).then( res => {
             setLoading(true);
             dispatch({type: 'LOAD_GUESTS', payload: res.data});
         }); 
@@ -41,17 +42,17 @@ const Guests = () => {
             mobile_number: mobile
         }
         if(toUpdateGuest._id){
-            axios.put(`http://localhost:8000/guests/${toUpdateGuest._id}`, newGuest).then(res => {
+            axios.put(`${api}/guests/${toUpdateGuest._id}`, newGuest).then(res => {
                 newGuest._id = res.data._id
                 dispatch({type: 'UPDATE_GUEST', payload: newGuest})
             })
         }else{
 
             // Check if email exists
-            axios.post('http://localhost:8000/guests/email-exists', {email_address:email}).then(res => {
+            axios.post(`${api}/guests/email-exists`, {email_address:email}).then(res => {
             
             if(!res.data){
-                axios.post('http://localhost:8000/guests', newGuest).then(res => {
+                axios.post(`${api}/guests`, newGuest).then(res => {
                     alert('New guest record created!');
                     console.log(res.data);
                     dispatch({type: 'ADD_GUEST', payload: res.data});
@@ -74,14 +75,14 @@ const Guests = () => {
         setLgShow(false);
     }
     console.log(guests);
-    const onDeleteHandler = (id) => {
-        axios.delete(`http://localhost:8000/guests/${id}`).then(res => {
+    const onGuestDeleteHandler = (id) => {
+        axios.delete(`${api}/guests/${id}`).then(res => {
             alert('Record has been deleted.')
             dispatch({type: 'DELETE_GUEST', payload: id})
         })
     }
 
-    const onUpdateHandler = (guest) => {
+    const onGuestUpdateHandler = (guest) => {
         setToUpdateGuest(guest);
         setLgShow(true);
         setFullName(guest.full_name);
@@ -96,10 +97,12 @@ const Guests = () => {
 
     return (
         <div className='wrapper'>
-           <h1>Guests</h1> 
-            <Button className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
+        <Row className='d-flex justify-content-end'>
+             <h1>Guests</h1> 
+            <Button style={{width: '150px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} className="mb-3" variant="primary" onClick={() => setLgShow(true)}>
             + New Guest
             </Button>
+        </Row>
 
             <Modal
             size="lg"
@@ -188,7 +191,7 @@ const Guests = () => {
                             </Col>
                         </Row>
 
-                        <Button variant="primary" type='submit' onClick={() => setLgShow(false)}>
+                        <Button style={{width: '150px', marginRight:'50px', background:'rgb(31, 30, 30)', borderColor: 'rgb(31, 30, 30)'}} type='submit' onClick={() => setLgShow(false)}>
                         {
                          toUpdateGuest._id ? 'Update Record' : 'Save New Guest'
                         }
@@ -212,7 +215,6 @@ const Guests = () => {
                         <th>Email Address</th>
                         <th>Contact Number</th>
                         <th></th>
-                        <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -230,8 +232,16 @@ const Guests = () => {
                                         <td>{dat.company_name}</td>
                                         <td>{dat.email_address}</td>
                                         <td>{dat.mobile_number}</td>
-                                        <td className='edit' onClick={()=> onUpdateHandler(dat)}><FaEdit /></td>
-                                        <td className='delete' onClick={()=> onDeleteHandler(dat._id)}><AiFillDelete /></td>
+                                        <td className='edit d-flex' style={{fontSize: '15px'}}>
+                                            <span>
+                                                <FaEdit style={{marginRight: '-45px',marginTop: '-5px'}} onClick={()=> onGuestUpdateHandler(dat)}/> 
+                                                Edit
+                                            </span>
+                                            <span>
+                                                <AiFillDelete style={{marginRight: '-45px',marginTop: '-5px', color:'red', fontSize:'18px'}} onClick={()=> onGuestDeleteHandler(dat._id)} /> 
+                                                Delete
+                                            </span> 
+                                        </td>
                                     </tr>
                                     </>
                                 )
